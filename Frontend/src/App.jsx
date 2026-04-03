@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Advisory from './pages/Advisory';
 import MandiRates from './pages/MandiRates';
+import Community from './pages/Community';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/mandi-rates" element={<MandiRates />} />
         <Route path="/advisory" element={<Advisory />} />
+        <Route path="/community" element={<Community />} />
       </Routes>
       <Footer />
     </Router>

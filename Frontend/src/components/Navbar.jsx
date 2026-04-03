@@ -26,6 +26,7 @@ export default function Navbar() {
           <Link to="/" className="nav-link">Home</Link>
           <Link to="/mandi-rates" className="nav-link">Near Mandi Rates</Link>
           <Link to="/advisory" className="nav-link">Ask Advisory</Link>
+          <Link to="/community" className="nav-link">Community</Link>
           {token ? (
             <div className="flex items-center gap-4">
               <span className="text-sm font-bold text-primary">📱 {phone}</span>
