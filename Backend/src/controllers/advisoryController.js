@@ -5,7 +5,7 @@ const Farmer = require('../models/Farmer');
 
 const getAdvice = async (req, res) => {
   try {
-    const { phone, crop, question } = req.body;
+    const { phone, crop, question, imageBase64 } = req.body;
 
     if (!crop || !question) {
       return res.status(400).json({
@@ -30,7 +30,7 @@ const getAdvice = async (req, res) => {
     );
 
     // Claude se advice lo
-    const answer = await getAdvisory(crop, weather, question);
+    const answer = await getAdvisory(crop, weather, question, imageBase64);
 
     // Database mein save karo
     const query = await Query.create({

@@ -1,12 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import axios from 'axios';
-import { MessageSquare, Send } from 'lucide-react';
+import { MessageSquare, Send, ImagePlus, X } from 'lucide-react';
 
 export default function Advisory() {
   const [crop, setCrop] = useState('');
   const [question, setQuestion] = useState('');
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [imageBase64, setImageBase64] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageBase64(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleAsk = async (e) => {
     e.preventDefault();
@@ -23,9 +36,14 @@ export default function Advisory() {
     }
 
     try {
+      const payload = { phone, crop, question };
+      if (imageBase64) {
+        payload.imageBase64 = imageBase64;
+      }
+
       const res = await axios.post(
         `${import.meta.env.VITE_API_BASE_URL}/api/advisory/ask`, 
-        { phone, crop, question },
+        payload,
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setResponse(res.data.data.answer);
@@ -61,6 +79,39 @@ export default function Advisory() {
               onChange={(e) => setCrop(e.target.value)}
               required
             />
+          </div>
+
+          <div className="input-group mb-4">
+             <label>Upload a photo of your crop (Optional)</label>
+             <div className="flex items-center gap-4">
+                <button 
+                  type="button"
+                  className="btn btn-outline"
+                  onClick={() => fileInputRef.current?.click()}
+                  style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}
+                >
+                  <ImagePlus size={18} /> Choose Photo
+                </button>
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  ref={fileInputRef}
+                  onChange={handleImageUpload}
+                  style={{ display: 'none' }}
+                />
+             </div>
+             {imageBase64 && (
+                <div style={{ marginTop: '1rem', position: 'relative', display: 'inline-block' }}>
+                   <img src={imageBase64} alt="Crop preview" style={{ height: '100px', borderRadius: '8px', objectFit: 'cover' }} />
+                   <button 
+                     type="button" 
+                     onClick={() => setImageBase64(null)}
+                     style={{ position: 'absolute', top: '-10px', right: '-10px', background: 'rgba(255,0,0,0.8)', color: 'white', borderRadius: '50%', padding: '4px' }}
+                   >
+                     <X size={14} />
+                   </button>
+                </div>
+             )}
           </div>
 
           <div className="input-group">
