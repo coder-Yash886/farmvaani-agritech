@@ -11,6 +11,7 @@ const authRoutes = require('./src/routes/authRoutes');
 const farmerRoutes = require('./src/routes/farmerRoutes');
 const advisoryRoutes = require('./src/routes/advisoryRoutes');
 const alertRoutes = require('./src/routes/alertRoutes');
+const mandiRoutes = require('./src/routes/mandiRoutes');
 
 const app = express();
 
@@ -28,6 +29,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/farmers', farmerRoutes);
 app.use('/api/advisory', advisoryRoutes);
 app.use('/api/alerts', alertRoutes);
+app.use('/api/mandi-rates', mandiRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

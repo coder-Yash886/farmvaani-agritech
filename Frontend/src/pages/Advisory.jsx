@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-import { MessageSquare, Send, ImagePlus, X } from 'lucide-react';
+import { MessageSquare, Send, ImagePlus, X, Mic, MicOff } from 'lucide-react';
 
 export default function Advisory() {
   const [crop, setCrop] = useState('');
@@ -8,7 +8,46 @@ export default function Advisory() {
   const [response, setResponse] = useState(null);
   const [loading, setLoading] = useState(false);
   const [imageBase64, setImageBase64] = useState(null);
+  const [isListening, setIsListening] = useState(false);
   const fileInputRef = useRef(null);
+  const recognitionRef = useRef(null);
+
+  const toggleListening = () => {
+    if (isListening) {
+      if (recognitionRef.current) recognitionRef.current.stop();
+      setIsListening(false);
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Voice typing is not supported in your browser. Please use Chrome or Edge.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognitionRef.current = recognition;
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.lang = 'en-IN'; // Can recognize English and some Hindi if supported
+
+    recognition.onstart = () => setIsListening(true);
+    
+    recognition.onresult = (event) => {
+      const current = event.resultIndex;
+      const transcript = event.results[current][0].transcript;
+      setQuestion(prev => prev + (prev ? ' ' : '') + transcript);
+    };
+
+    recognition.onerror = (event) => {
+      console.error("Speech Recognition Error:", event.error);
+      setIsListening(false);
+    };
+
+    recognition.onend = () => setIsListening(false);
+
+    recognition.start();
+  };
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -116,7 +155,7 @@ export default function Advisory() {
 
           <div className="input-group">
             <label>What's on your mind?</label>
-            <div className="flex gap-4">
+            <div className="flex gap-4 items-center">
               <input 
                 type="text" 
                 className="input-field" 
@@ -124,7 +163,16 @@ export default function Advisory() {
                 value={question}
                 onChange={(e) => setQuestion(e.target.value)}
               />
-              <button type="submit" className="btn btn-primary" disabled={loading} style={{ padding: '0 2rem' }}>
+              <button 
+                type="button" 
+                onClick={toggleListening} 
+                className={`btn ${isListening ? 'btn-secondary' : 'btn-outline'}`}
+                style={{ padding: '0 1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%' }}
+                title="Voice Typing"
+              >
+                {isListening ? <MicOff size={24} className="animate-pulse text-red-600" /> : <Mic size={24} />}
+              </button>
+              <button type="submit" className="btn btn-primary" disabled={loading} style={{ padding: '0 2rem', height: '100%' }}>
                 {loading ? 'Asking...' : <><Send size={20} /> Ask</>}
               </button>
             </div>
