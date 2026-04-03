@@ -3,6 +3,11 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 require('dotenv').config();
 
+process.on('uncaughtException', (err) => {
+  console.log('ERROR:', err.stack);
+});
+
+const authRoutes = require('./src/routes/authRoutes');
 const farmerRoutes = require('./src/routes/farmerRoutes');
 const advisoryRoutes = require('./src/routes/advisoryRoutes');
 const alertRoutes = require('./src/routes/alertRoutes');
@@ -18,6 +23,7 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((err) => console.log('MongoDB error:', err.message));
 
 // Routes
+app.use('/api/auth', authRoutes);
 app.use('/api/farmers', farmerRoutes);
 app.use('/api/advisory', advisoryRoutes);
 app.use('/api/alerts', alertRoutes);
@@ -29,13 +35,14 @@ app.get('/health', (req, res) => {
     message: 'FarmVaani chal raha hai!',
     db: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
     routes: [
-      'POST /api/farmers/register',
-      'GET  /api/farmers/:phone',
+      'POST /api/auth/signup',
+      'POST /api/auth/login',
+      'GET  /api/auth/profile',
+      'PUT  /api/auth/change-password',
       'POST /api/advisory/ask',
       'GET  /api/advisory/history/:phone',
       'POST /api/alerts/generate',
-      'GET  /api/alerts/:phone',
-      'PATCH /api/alerts/read/:id'
+      'GET  /api/alerts/:phone'
     ]
   });
 });
