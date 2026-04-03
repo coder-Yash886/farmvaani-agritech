@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { LogIn } from 'lucide-react';
 
@@ -7,14 +7,23 @@ export default function Login() {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      // connecting to local backend for testing
-      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/auth/login`, { phone, password });
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/farmers/login`, { phone, password });
+      
+      // Save token and info to localStorage
+      if (res.data.data && res.data.data.token) {
+        localStorage.setItem('token', res.data.data.token);
+        localStorage.setItem('farmerId', res.data.data.id);
+        localStorage.setItem('farmerPhone', res.data.data.phone);
+      }
+      
       alert('Login successful! Welcome back.');
+      navigate('/advisory'); // Redirect after successful login
     } catch (error) {
       alert('Login failed: ' + (error.response?.data?.message || error.message));
     } finally {
