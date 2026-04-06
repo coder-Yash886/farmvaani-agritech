@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { UserPlus, MapPin } from 'lucide-react';
 
@@ -15,6 +15,7 @@ export default function Signup() {
   });
   const [loading, setLoading] = useState(false);
   const [locating, setLocating] = useState(false);
+  const navigate = useNavigate();
 
   const handleSignup = async (e) => {
     e.preventDefault();
@@ -31,7 +32,8 @@ export default function Signup() {
       // We will hit the farmers register API as requested by the user's snippet.
       // If auth is needed later, they can switch this to /api/auth/signup
       await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/farmers/register`, payload);
-      alert('Farmer registered successfully!');
+      alert('Registration successful! Please login with your credentials.');
+      navigate('/login');
     } catch (error) {
       alert('Registration failed: ' + (error.response?.data?.message || error.message));
     } finally {

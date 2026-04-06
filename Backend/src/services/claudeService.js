@@ -1,12 +1,12 @@
-const Groq = require('groq-sdk');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-const client = new Groq({
-  apiKey: process.env.GROQ_API_KEY
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 const getAdvisory = async (crop, weather, question, imageBase64) => {
   try {
-    let modelName = 'llama-3.3-70b-versatile';
+    const modelName = 'gemini-2.0-flash';
+    const model = genAI.getGenerativeModel({ model: modelName });
+
     let messageContent = `
 Tu ek expert Indian farm advisor hai. 
 Farmer ki baat Hindi mein sun aur simple Hindi mein jawab de.
@@ -23,27 +23,33 @@ Farmer ka sawaal: ${question}
 Simple aur practical advice de Hindi mein. 3-4 lines mein jawab de.
     `;
 
-    // If an image is provided, construct a multi-modal message
+    let result;
     if (imageBase64) {
-      modelName = 'llama-3.2-11b-vision-preview'; // Groq Vision model
-      messageContent = [
-        { type: "text", text: messageContent },
-        { type: "image_url", image_url: { url: imageBase64 } }
+      let base64Data = imageBase64;
+      let mimeType = 'image/jpeg';
+
+      if (imageBase64.includes(',')) {
+        base64Data = imageBase64.split(',')[1];
+      }
+      if (imageBase64.startsWith('data:')) {
+        mimeType = imageBase64.split(';')[0].split(':')[1];
+      }
+      
+      const imageParts = [
+        {
+          inlineData: {
+            data: base64Data,
+            mimeType
+          }
+        }
       ];
+      
+      result = await model.generateContent([messageContent, ...imageParts]);
+    } else {
+      result = await model.generateContent(messageContent);
     }
 
-    const response = await client.chat.completions.create({
-      model: modelName,
-      messages: [
-        {
-          role: 'user',
-          content: messageContent
-        }
-      ],
-      max_tokens: 500
-    });
-
-    return response.choices[0].message.content;
+    return result.response.text();
 
   } catch (error) {
     throw new Error('Advisory nahi mili: ' + error.message);

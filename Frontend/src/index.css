@@ -269,8 +269,62 @@ button {
   color: var(--primary);
 }
 
-@media (max-width: 768px) {
+.mobile-menu-btn {
+  display: none;
+  background: transparent;
+  color: var(--primary);
+  border: none;
+  z-index: 60;
+  cursor: pointer;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.auth-phone {
+  font-size: 0.9rem;
+  font-weight: bold;
+  color: var(--primary);
+  background: var(--primary-transparent);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+}
+
+@media (max-width: 900px) {
+  .logo-text {
+    display: none;
+  }
+  
+  .mobile-menu-btn {
+    display: flex;
+  }
+
   .nav-links {
-    display: none; /* simple mobile nav approach for now */
+    display: none; /* Hide default flex list */
+    flex-direction: column;
+    position: absolute;
+    top: 80px;
+    left: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+    align-items: center;
+    backdrop-filter: blur(10px);
+  }
+
+  .nav-links.mobile-open {
+    display: flex;
+  }
+  
+  .nav-actions {
+    flex-direction: column;
+    width: 100%;
+    gap: 1rem;
+    margin-top: 1rem;
   }
 }
+

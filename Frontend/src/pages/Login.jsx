@@ -20,6 +20,9 @@ export default function Login() {
         localStorage.setItem('token', res.data.data.token);
         localStorage.setItem('farmerId', res.data.data.id);
         localStorage.setItem('farmerPhone', res.data.data.phone);
+        if (res.data.data.name) {
+          localStorage.setItem('farmerName', res.data.data.name);
+        }
       }
       
       alert('Login successful! Welcome back.');

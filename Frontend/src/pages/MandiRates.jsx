@@ -21,7 +21,7 @@ export default function MandiRates() {
     setLoading(true);
     setError(null);
     try {
-      let url = 'http://localhost:5001/api/mandi-rates?limit=50';
+      let url = `${import.meta.env.VITE_API_BASE_URL}/api/mandi-rates?limit=50`;
       if (stateFilter) url += `&state=${encodeURIComponent(stateFilter)}`;
       if (districtFilter) url += `&district=${encodeURIComponent(districtFilter)}`;
       if (commodityFilter) url += `&commodity=${encodeURIComponent(commodityFilter)}`;

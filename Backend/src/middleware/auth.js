@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Farmer = require('../models/Farmer');
 
 const protect = async (req, res, next) => {
   try {
@@ -21,8 +22,20 @@ const protect = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    req.user = await User.findById(decoded.id).select('-password');
+    // Try Farmer first (primary auth system), then fall back to User
+    let user = await Farmer.findById(decoded.id).select('-password');
+    if (!user) {
+      user = await User.findById(decoded.id).select('-password');
+    }
 
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'User nahi mila, login karo'
+      });
+    }
+
+    req.user = user;
     return next();
 
   } catch (error) {

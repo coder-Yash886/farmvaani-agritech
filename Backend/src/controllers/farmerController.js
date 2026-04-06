@@ -37,7 +37,13 @@ const registerFarmer = async (req, res) => {
     res.status(201).json({ 
       success: true, 
       message: 'Farmer registered ho gaya!',
-      data: farmer 
+      data: {
+        id: farmer._id,
+        name: farmer.name,
+        phone: farmer.phone,
+        village: farmer.village,
+        crops: farmer.crops
+      }
     });
 
   } catch (error) {
