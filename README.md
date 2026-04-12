@@ -269,24 +269,3 @@ VITE_API_BASE_URL=http://localhost:5000/api
 
 ---
 
-## 👨‍💻 Developer
-
-<div align="center">
-
-**Yash Kumar**
-
-B.Tech Student — Ajay Kumar Garg Engineering College, Ghaziabad
-
-[![GitHub](https://img.shields.io/badge/GitHub-coder--Yash886-181717?style=flat-square&logo=github)](https://github.com/coder-Yash886)
-
----
-
-<br/>
-
-⭐ **Star this repo if you found it useful!** ⭐
-
-<br/>
-
-*Made with ❤️ for India's Farmers* 🌾🇮🇳
-
-</div>
